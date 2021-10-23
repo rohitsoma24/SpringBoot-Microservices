@@ -1,0 +1,28 @@
+in Microservices,
+1)we will keep application.properties in github/gitlab
+2)And we create a config server using spring boot which will talk to
+github to fetch props file
+
+3) And lastly, our microservices will(config client) will talk to 
+config server to take the props file
+
+and to build this microservice we will pass VM argument(dev/prod) while running
+Spring boot app
+
+-------------------------------------------------------
+
+Why we are keeping this application.props in external location(github)?
+-> beacuse this props file will contain a data which keeps on changing like
+db configs etc
+and we dont want to build applicaion and deploy again and again
+
+
+Points:
+1)develop store app
+2)names for appltion url
+3)rest WS is Microservice bcz it satisfies one of the MS modles(smart end point)
+microservices.io
+Netfilx Eureka is a service registry
+service regisrty
+dynamic regitry
+dynamic discovery

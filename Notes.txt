@@ -1,0 +1,89 @@
+
+Microservices:
+
+loosely coupled
+independently deployed
+collection of small, autonomous services
+protocols - light weight
+avoid performance issue
+reliability
+scalability
+without impacting existing services
+debug
+testing
+decentralize architecture and robust
+
+-----------------------------------------------------
+
+
+WebServices:
+a) SOAP WS
+b) RESTful WS
+
+Intelligence in Endpoints:
+
+1) Smart Endpoints
+RESTful WS - Endpoints
+- HTTP
+
+2) Dumps Pipes
+MQ
+- Queue - Point to Point Messaging
+- Topic - Publisher and Subscriber
+
+--------------------------------------------------------
+
+a) SOAP WS
+- business rules, human activity, proxies, integration
+
+W3C - SOA (components)
+
+SOA Developer 		- SAR
+SOA Administrator	
+
+--------------------------------------------------------
+
+Demo:
+
+Spring Boot: 2.3.10.RELEASE
+
+Storeapp:
+- Create SpringBootApplication
+
+Starters:
+- Spring Web
+- Spring Data JPA
+- Spring Actuator
+- Lombok
+- H2
+
+--------------------------------------------------------
+
+Add some Record: (dev)
+
+1) data.sql
+2) CommandLineRunner
+
+--------------------------------------------------------
+
+Stereotypes:
+
+			@Component
+
+
+@Controller		@Service		@Repository
+@RestController
+
+--------------------------------------------------------
+
+@RequestMapping
+
+--------------------------------------------------------
+
+/products	GET		Fetch All Products
+/products/1	GET		Fetch Single Product
+/products	POST		Add Product
+/products	PUT		Update Product
+/products/1 	DELETE          Delete by id
+
+--------------------------------------------------------
