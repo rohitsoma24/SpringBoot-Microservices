@@ -87,3 +87,719 @@ Stereotypes:
 /products/1 	DELETE          Delete by id
 
 --------------------------------------------------------
+
+AppAccess => TalentNext => My Learning => Java Microservices - S1
+=> Practice Tab => Request Access Button
+
+You can request access to Practice Lab only after winning the On Track to Pro badge. For now, please continue learning
+
+VILT:
+50% Attendance
+
+VILT - Practice Exercise
+     - CLAG
+
+url, username, password
+
+--------------------------------------------------------
+
+Storeapp:
+application.properties
+
+Access the URI:
+/h2-console
+/actuator (all endpoints)
+
+--------------------------------------------------------
+
+1000 Microservices:
+
+- Dev(H2), Test(MySQL - Standalone), Prod(MySQL - Clustered)
+
+Seperate config on each env
+
+3000 properties
+
+application-dev.properties
+Profile: dev(env)
+
+application-test.properties
+Profile: test(env)
+
+application-prod.properties
+Profile: prod(env)
+
+--------------------------------------------------------
+
+application-dev.properties
+Profile: dev(env)
+
+application-prod.properties
+Profile: prod(env)
+
+--------------------------------------------------------
+
+pom.xml in storeapp:
+
+1) Add the MySQL connector dependency
+
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+</dependency>
+
+--------------------------------------------------------
+
+application-dev.properties
+application-prod.properties
+
+--------------------------------------------------------
+
+Any change in properties:
+
+1) Create a Jar (new codebase)
+2) Centralized - Github (versioned)
+
+--------------------------------------------------------
+
+1) Distributed Configuration:
+- Spring Cloud Config
+
+https://spring.io/projects/spring-cloud
+
+https://spring.io/projects/spring-cloud-config
+
+--------------------------------------------------------
+
+Environment - Immutable
+
+--------------------------------------------------------
+
+Features
+Spring Cloud Config Server features:
+1) HTTP, resource-based API for external configuration (name-value pairs, or equivalent YAML content)
+2) Encrypt and decrypt property values (symmetric or asymmetric)
+3) Embeddable easily in a Spring Boot application using @EnableConfigServer
+
+Config Client features (for Spring applications):
+1) Bind to the Config Server and initialize Spring Environment with remote property sources
+2) Encrypt and decrypt property values (symmetric or asymmetric)
+
+--------------------------------------------------------
+
+Steps:
+
+1) Set up a git repository & upload application.properties files:
+
+https://github.com/ManpreetSinghBindra/talentnext
+
+https://github.com/ManpreetSinghBindra/talentnext/blob/master/application-dev.properties
+
+https://github.com/ManpreetSinghBindra/talentnext/blob/master/application-prod.properties
+
+--------------------------------------------------------
+
+Spring Boot Version: 2.3.10.RELEASE
+Spring Cloud Version: Hoxton.SR11
+
+--------------------------------------------------------
+
+2) Spring Cloud Config Server:
+
+2.1) Create a new Project (cloudserver-config):
+- Select starter - Config Server, Actuator
+
+2.2) Add @EnableConfigServer in Application class (main method)
+
+2.3) In application.properties:
+
+server.port=8888
+spring.cloud.config.server.git.uri=https://github.com/ManpreetSinghBindra/talentnext
+#spring.cloud.config.server.git.username=
+#spring.cloud.config.server.git.password=
+
+2.4) Start the application
+
+2.5) Test:
+
+http://localhost:8888/{name}/{profile}/{label}
+
+application.properties:
+http://localhost:8888/application/default/master
+
+--------------------------------------------------------
+
+application-dev.properties:
+http://localhost:8888/application/dev/master
+
+application-prod.properties:
+http://localhost:8888/application/prod/master
+
+--------------------------------------------------------
+
+3) Spring Cloud Config Client: (storeapp microservice)
+
+spring-cloud-cloud-server
+
+3.1) Add spring-cloud-starter-config starter in pom.xml:
+- Config Client
+
+3.2) In application.properties:
+spring.cloud.config.uri=http://localhost:8888
+
+3.3) Start the Config Server (cloudserver-config)
+
+3.4) Start the storeapp
+
+--------------------------------------------------------
+
+VM Arguments:
+-Dspring.profiles.active=dev		in VM Argument
+-Dspring.profiles.active=prod		in VM Argument
+
+--------------------------------------------------------
+
+ProductService
+OrderService
+BillingDetails
+ShippingDetails
+ReviewService
+RecommendationService
+
+--------------------------------------------------------
+
+application-dev.properties
+application-prod.properties
+
+to 
+
+product-service-dev.properties
+product-service-prod.properties
+
+--------------------------------------------------------
+
+Test Config Server:
+
+http://localhost:8888/product-service/dev/master
+http://localhost:8888/product-service/prod/master
+
+--------------------------------------------------------
+
+Imp:
+Storeapp:
+
+i) In application.properties:
+spring.application.name=product-service
+
+ii) In VM Argument:
+-Dspring.profiles.active=prod
+
+iii) Label:
+spring.cloud.config.label=master
+
+--------------------------------------------------------
+
+**********************Spring Environment
+
+- Immutable
+
+http://localhost:8080/actuator/env 
+
+Solution:
+
+1) Restart your application (storeapp)
+2) Spring Cloud Config Client - Actuator - /refresh
+
+Steps to Enable Actuator:
+
+1) Add the dependency in pom.xml:
+
+<dependency>
+<groupId>org.springframework.boot</groupId>
+<artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+
+2) In application.properties file:
+
+management.endpoints.web.exposure.include=*
+
+3) Exposing 15 endpoint(s) beneath base path '/acutator'
+- /actuator/refresh (Trigger)
+
+"http://localhost:8080/actuator/refresh"
+- POST method
+
+POSTman, curl, AJAX or Programming Languages, Script, Tools
+
+--------------------------------------------------------
+
+1) Schedular
+2) MQ Arch
+- Topic - Publisher & Subscriber(MS)
+
+--------------------------------------------------------
+
+Dynamic Port 
+- Changing Port
+
+Dynamic IP Address
+Cloud - AutoScaling
+
+--------------------------------------------------------
+
+service to service call - failed
+
+--------------------------------------------------------
+
+https://microservices.io/patterns/service-registry.html
+
+https://microservices.io/patterns/self-registration.html
+
+--------------------------------------------------------
+
+Day 4:
+
+Setting up the Eureka Server:
+
+1) Create a Spring Boot Project: (cloudserver-eureka)
+- Starter - Eureka Server
+
+<dependency>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
+
+2) In application.properties:
+
+server.port=8761
+eureka.client.register-with-eureka=false
+eureka.client.fetch-registry=false
+
+3) Add @EnableEurekaServer on the Application class
+
+4) Stater the server & access
+http://localhost:8761/
+
+---------------------------------------------------------
+
+Dynamic Registration:
+
+Service Provider: (Service Instance/Eureka Client) - storeapp
+
+1) In pom.xml (Starter - Eureka Discovery Client)
+
+<dependency>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+
+2) In application.properties:
+
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.instance.preferIpAddress=true
+
+3) Add @EnableEurekaClient to the Application class
+
+4) Start the Config Server
+   Start the Eureka Server
+   Start the storeapp
+
+---------------------------------------------------------
+
+spring.application.name
+
+Two responsibilities:
+1) Spring Cloud Config - Property file name
+2) Spring Cloud Eureka - Instance (Service Provider) is registered with this name (serviceId)
+
+---------------------------------------------------------
+
+Service Consumer: (Dynamic Discovery)
+
+http://product-service/products		GET
+http://product-service/products/1	GET
+
+---------------------------------------------------------
+
+https://microservices.io/patterns/client-side-discovery.html
+
+Client Side Load Balancing: (Ribbon)
+
+Client Side Discovery: (implementation Netflix Ribbon)
+- Registry aware HTTP Client
+- Round Robbin Algorithm
+- Caching
+
+Service to Service:
+- RestTemplate (HTTP Client) 
+
+- get
+- post
+- put
+- delete 
+- patch
+- exchange
+
+Spring Cloud Ribbon:
+- @LoadBalanced
+
+---------------------------------------------------------
+
+url
+
+---------------------------------------------------------
+
+RestTemplate rt = new RestTemplate();
+rt.get..("http://product-service/products");
+
+---------------------------------------------------------
+
+************************** Client Side Load Balancing with Ribbon:
+(serviceconsumer-eureka-ribbon)
+
+1) Create a Spring Boot Project: (serviceconsumer-eureka-ribbon)
+- Starter - Eureka Discovery Client(/Ribbon), Web, Actuator
+
+2) In application.properties:
+
+server.port=9997
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+3) Consumer:
+http://product-service/products/1	GET
+
+4) Create a Controller
+
+5) Create a RegistryAwareConfig 
+- RestTemplate - @LoadBalanced - Config class
+
+6) Test:
+http://localhost:9997/get-products/1
+
+---------------------------------------------------------
+
+Day 5:
+
+************************ Spring Cloud Routing - OpenFeign
+(serviceconsumer-eureka-feign)
+
+1) Create a Spring Boot Project: (serviceconsumer-eureka-feign)
+- Starter - Eureka Discovery Client/Ribbon, OpenFeign, Web, Actuator
+
+2) In application.properties:
+
+server.port=9996
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+3) Create the ProductServiceProxy Interface
+
+@FeignClient("product-service")
+
+4) Autowired the Proxy in Controller/Service
+
+5) Add @EnableFeignClients in the Application class
+
+---------------------------------------------------------
+
+https://microservices.io/patterns/reliability/circuit-breaker.html
+
+---------------------------------------------------------
+
+service-to-service call:
+
+1) Ribbon (RestTemplate)
+- @HystrixCommand(fallbackMethod="")
+
+2) OpenFeign 
+- @FeignClient(name="product-service",
+fallback=ProductServiceProxyImpl.class)
+
+---------------------------------------------------------
+
+Note:
+@HystrixCommand(fallbackMethod)/@FeignClient(fallback) will only works in a class marked with @Service/@Component
+
+---------------------------------------------------------
+
+1) Ribbon (RestTemplate)
+- @HystrixCommand(fallbackMethod="")
+
+
+Steps:
+
+1) Create a Spring Boot Project: (serviceconsumer-eureka-ribbon-hystrix)
+- Starter - Eureka Discovery Client(/Ribbon), Web, Actuator
+
+2) In pom.xml:
+<dependency>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+</dependency>
+
+3) In application.properties:
+
+server.port=9995
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+#Enable Actuator
+management.endpoints.web.exposure.include=*
+
+4) Create a ProductService class
+
+Note:
+@HystrixCommand(fallbackMethod) will only works in a class marked with @Service/@Component
+
+5) Add @EnableCircuitBreaker in the main class
+
+---------------------------------------------------------
+
+2) OpenFeign 
+- @FeignClient(name="product-service",
+fallback=ProductServiceProxyImpl.class)
+
+1) Create a Spring Boot Project: (serviceconsumer-eureka-feign-hystrix)
+- Starter - Eureka Discovery Client/Ribbon, OpenFeign, Web, Actuator
+
+2) In pom.xml:
+<dependency>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+</dependency>
+
+3) In application.properties:
+
+server.port=9996
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+#Enable Actuator
+management.endpoints.web.exposure.include=*
+
+4) Note:
+feign.hystrix.enabled=true
+(don't forget to add it)
+
+5) Create a ProductServiceFallback class
+- Should Be annotated with @Component/@Service
+
+6) @FeignClient(fallback=ProductServiceFallback.class)
+
+7) Add @EnableCircuitBreak in the main class.
+
+---------------------------------------------------------
+
+Day 6:
+
+Hystrix Dashboard: (Ribbon/OpenFeign)
+
+1) In pom.xml: (Actuator)
+
+<dependency>
+<groupId>org.springframework.cloud</groupId>
+<artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
+</dependency>
+
+2) Add @EnableHystrixDashboard on the Application class
+
+3) In application.properties:
+
+server.port=9994
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+management.endpoints.web.exposure.include=*
+
+#Imp
+feign.hystrix.enabled=true
+
+#Imp 
+hystrix.dashboard.proxy-stream-allow-list=*
+
+4) Hystrix Dashboard:
+http://localhost:9994/hystrix
+
+Hystrix Stream Endpoints:
+http://localhost:9994/actuator/hystrix.stream
+
+
+---------------------------------------------------------
+
+State:
+
+1) Closed State
+- This state implies that the service is up and running(properly).
+
+2) Open State
+- In this state circuit breaker will not make the remote calls.
+- The circuit breaker with trigger the fallback method.
+
+3) Half Open State
+- This is a stage that the circuit breaker takes after spending some time in close stage.
+- Make a remote call to the service
+	- If fails, go to open stage
+	- If success, go to close stage
+
+---------------------------------------------------------
+
+https://microservices.io/patterns/apigateway.html
+
+
+https://howtodoinjava.com/wp-content/uploads/2017/07/Zull-filters.jpg
+
+---------------------------------------------------------
+
+Spring Cloud Routing: (Zuul)
+
+1) Create a Project: (storeapp-zuul-proxy)
+- Starter - Zuul, Actuator, Web
+
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+</dependency>
+
+2) Add @EnableZuulProxy annotation in the Application class
+
+3) Create PreFilter, PostFilter, RouteFilter, ErrorFilter
+- extends ZuulFilter
+
+Filter Type:
+"pre"
+"post"
+"error"
+"route"
+
+4) Register the filters
+
+---------------------------------------------------------
+
+API Gateway - Microservices:
+
+5) storeapp - http://localhost:50476/products
+
+6) In application.properties:
+
+#zuul routes
+zuul.routes.products.url=http://localhost:50476
+zuul.routes.products.path=/api/**
+
+#will start the api gateway server @8080
+server.port=8080
+
+---------------------------------------------------------
+
+http://localhost:8080/api/products
+http://localhost:8080/api/products/1
+
+---------------------------------------------------------
+
+API Gateway - EurekaRegistry
+
+1) Create a Project: (storeapp-zuul-proxy2-eureka)
+- Starter - Zuul, Actuator, Web, Eureka Discovery CLient
+
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.cloud</groupId>
+	<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
+
+2) Add @EnableZuulProxy annotation in the Application class
+
+3) Create PreFilter, PostFilter, RouteFilter, ErrorFilter
+- extends ZuulFilter
+
+Filter Type:
+"pre"
+"post"
+"error"
+"route"
+
+4) Register the filters
+
+---------------------------------------------------------
+
+5) storeapp - http://product-service/products
+
+6) In application.properties:
+
+#zuul routes
+zuul.routes.products.service-id=product-service
+zuul.routes.products.path=/api/**
+
+#will start the api gateway server @8080
+server.port=8080
+
+#Eureka Server Details
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+eureka.client.register-with-eureka=false
+
+---------------------------------------------------------
+
+Java Microservices - S1
+
+Docker - S1
+AWS Cloud Practitioner - S1
+
+Java Microservices - S2
+
+----------------------------------------------------------
+
+Zipkin
+- tool for distributed tracing in microservices ecosystem.
+
+4 modules:
+
+1) Collector
+2) Storage
+3) Search
+4) Web UI
+
+
+https://repo1.maven.org/maven2/io/zipkin/java/zipkin-server/2.12.9/zipkin-server-2.12.9-exec.jar
+
+java -jar zipkin-server-2.12.9-exec.jar
+
+Web UI at http://localhost:9411/zipkin/
+
+
+Sleuth: 
+- tool from Spring Cloud Family.
+- It is used to generate the traceid, spanid
+
+----------------------------------------------------------
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zipkin</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-sleuth</artifactId>
+</dependency>
+
+----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
